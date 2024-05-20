@@ -1,0 +1,46 @@
+
+{{- if and .Values.migrations.enabled (eq .Values.migrations.type "pre-upgrade-job") }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "atlas.fullname" . }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ include "atlas.fullname" . | quote }}
+    app.kubernetes.io/version: {{ .Values.image.tag }}
+    helm.sh/chart: "{{ printf "%s-%s" (include "atlas.fullname" .) .Chart.Version | trunc 63 | replace "+" "_" }}"
+  {{- with .Values.annotations.preupgradejob }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ printf "%s-%s" (include "atlas.fullname" .) .Chart.Version | trunc 63 | replace "+" "_" }}"
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+      - name: pre-upgrade-job
+        {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
+        envFrom:
+        {{ include "atlas.secret" . | indent 10 }}
+          {{- range .Values.secrets.additional.name }}
+          - secretRef: 
+              name: {{ . | quote }}
+          {{- end }}
+        {{- end }}
+        {{- include "atlas.customImage" . | indent 8 }}
+        command: ["/bin/sh", "-c"]
+        args: 
+          {{- range .Values.migrations.args }}
+          - {{ . | quote }}
+          {{- end}}
+{{- end}}

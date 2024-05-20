@@ -1,0 +1,21 @@
+{{- $selLabs := include "atlas.selectorLabels" . | nindent 4 -}}
+{{- $namespaces := .Values.namespace -}}
+{{- if .Values.ingress.enabled }}
+{{- range .Values.ingress.configs }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s" .ingressName | trunc 63 | trimSuffix "-" }}
+  annotations:
+{{ toYaml $.Values.annotations.ingress | indent 4 }}
+  labels:
+    {{- $selLabs }}
+  namespace: {{ $namespaces }}
+spec:
+{{- if .className }}
+  ingressClassName: {{ .className }}
+{{- end }}
+  rules: {{ toYaml .rules | nindent 4 }}
+{{- end }}
+{{- end }}

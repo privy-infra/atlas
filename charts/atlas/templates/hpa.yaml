@@ -1,0 +1,54 @@
+{{- if .Values.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "atlas.fullname" . }}
+  labels:
+    {{- include "atlas.labels" . | nindent 4 }}
+  {{- with .Values.annotations.hpa }}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "atlas.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Min
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 900
+        periodSeconds: 30
+      selectPolicy: Max
+  metrics:
+    {{- if .Values.autoscaling.averageUtilMem }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.averageUtilMem }}
+    {{- end }}
+    {{- if .Values.autoscaling.averageUtilCpu }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.averageUtilCpu }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "atlas.fullname" . }}
+  labels:
+    {{- include "atlas.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "atlas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.annotations.deployment }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "atlas.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.hostAliases }}
+      hostAliases:
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.gracePeriodSeconds.enabled }}
+      terminationGracePeriodSeconds: {{ .Values.gracePeriodSeconds.value }}
+      {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if and .Values.migrations.enabled (eq .Values.migrations.type "init-container") }}
+      initContainers:
+        - name: {{ include "atlas.fullname" . }}-migrations
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- include "atlas.customImage" . | indent 10 }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
+          envFrom:
+          {{- include "atlas.secret" . | indent 10 }}
+            {{- range .Values.secrets.additional.name }}
+            - secretRef: 
+                name: {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          command: ["/bin/sh", "-c"]
+          args: 
+            {{- range .Values.migrations.args }}
+            - {{ . | quote }}
+            {{- end}}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "atlas.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "atlas.fullname" . }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
+          envFrom:
+          {{- include "atlas.secret" . | indent 10 }}
+            {{- range .Values.secrets.additional.name }}
+            - secretRef: 
+                name: {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.interceptor.enabled }}
+          command: ["/bin/sh", "-c"]
+          args: [{{ .Values.interceptor.args | quote }}]
+          {{- end }}
+          ports:
+            {{- range .Values.service.configs }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort }}
+              protocol: {{ .protocol }}
+            {{- end }}
+          {{- include "atlas.liveness" . | indent 10 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,15 @@
+{{- if .Values.persistentVolume.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "atlas.fullname" . }}-pvc
+spec:
+  {{- range .Values.persistentVolume.configs }}
+  storageClassName: {{ .storageClassName }}
+  accessModes:
+    - {{ .accessModes }}
+  resources:
+    requests:
+      storage: {{ .storageSize }}
+  {{- end }}
+{{- end }}

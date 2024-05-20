@@ -1,0 +1,39 @@
+{{- if .Values.secrets.creds.enabled }}
+apiVersion: koudingspawn.de/v1
+kind: Vault
+metadata:
+  name: {{ include "atlas.fullname" . }}-creds
+  namespace: {{ .Values.namespace }}
+  {{- with .Values.annotations.vault }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.secrets.creds.autorestart.enabled }}
+  changeAdjustmentCallback:
+    name: {{ include "atlas.fullname" . }}
+    type: deployment
+  {{- end }}
+  path: {{ .Values.secrets.creds.path }}
+  type: KEYVALUE
+{{- end }}
+---
+{{- if .Values.secrets.configs.enabled }}
+apiVersion: koudingspawn.de/v1
+kind: Vault
+metadata:
+  name: {{ include "atlas.fullname" . }}-configs
+  namespace: {{ .Values.namespace }}
+  {{- with .Values.annotations.vault }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.secrets.configs.autorestart.enabled }}
+  changeAdjustmentCallback:
+    name: {{ include "atlas.fullname" . }}
+    type: deployment
+  {{- end }}
+  path: {{ .Values.secrets.configs.path }}
+  type: KEYVALUE
+{{- end }}

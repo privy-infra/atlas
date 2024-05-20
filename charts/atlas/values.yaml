@@ -1,0 +1,243 @@
+# Default values for atlas.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+##########################
+### Start Custom Atlas ###
+##########################
+
+nameOverride: "atlas"
+fullnameOverride: "atlas"
+
+## Pods Lifecycle ##
+gracePeriodSeconds:
+  enabled: true
+  value: 60
+
+## Namespace ##
+namespace: {}
+
+## Secret ##
+secrets:
+  configs:
+    enabled: false
+    autorestart:
+      enabled: false
+    path: pathto/configs/atlas
+  creds:
+    enabled: false
+    autorestart:
+      enabled: false
+    path: pathto/creds/atlas
+  additional:
+    enabled: false
+    name: {}
+
+## Volumes ##
+## Add google creds SA here
+## google Creds names for RC is samilar with green releases
+volumes: 
+  # example volume from secrets
+  # - name: service-account
+  #   secret:
+  #     secretName: atlas-sa
+  # example volume from pvc
+  # - name: data
+  #   persistentVolumeClaim:
+  #     claimName: volumes-pvc
+volumeMounts:
+  # example volume from secrets
+  # - name: service-account
+  #   mountPath: /mnt
+  # example volume from pvc
+  # - name: data
+  #   mountPath: /data
+
+## liveness type httpGet, exec, tcpSocket
+## httpGet require path
+## exec for gRPC
+## tcpSocket not require path
+liveness:
+  port: 8000
+  type: tcpSocket
+  path: /ping
+  initialDelay: 30
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
+
+## Service ##
+
+service:
+  type: ClusterIP
+  configs: {}
+    # - name: http
+    #   port: 80
+    #   targetPort: 8000
+    #   protocol: TCP
+    # - name: grpc
+    #   port: 80
+    #   targetPort: 8000
+    #   protocol: TCP
+    # - name: http
+    #   port: 3000
+    #   targetPort: 3000
+    #   protocol: TCP
+  # Headless to load balance grpc service that have more than one pods
+  headless: false
+
+## This is default imagePullSecret
+imagePullSecrets:
+  - name: "gcr-json-key"
+image:
+  pullPolicy: "IfNotPresent"
+  repository: [] # {"$imagepolicy": "flux-system:atlas:name"}
+  tag: [] # {"$imagepolicy": "flux-system:atlas:tag"}
+
+## Use interceptor to build env and run the entrypoint command (Read Dockerfile)
+interceptor:
+  enabled: false
+  args: "echo 'test-interceptor'" # "cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml && ./atlas http"
+
+## Migration ##
+migrations:
+  enabled: false
+  # type: pre-upgrade-job
+  type: init-container
+    # Init Container 
+    # - "cd /go/src/atlas && ./main db:migrate"
+    # Pre-Uprade-Job 
+    # - "cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml ; ./atlas db:migrate up"
+  args:
+    - "cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml; echo 'Initializing Service...'"
+    # - "cd /opt/atlas ; ./atlas db:migrate up"
+  # custom image init container
+  customImage: 
+    enabled: false
+    image:
+      repository: []
+      tag: []
+## HPA ##
+## set enabled: false to disable HPA
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  averageUtilMem: 80
+  averageUtilCpu: 80
+
+## Replica ##
+replicaCount: 1
+
+## check TRD to setup resource
+resources: 
+  limits:
+    cpu: 400m
+    memory: 256Mi
+  requests:
+    cpu: 300m
+    memory: 192Mi
+
+## Ingress ##
+## enable disable ingress
+## set true to ingress.external.enabled to enable external ingress
+## you can modify ingress.rules freely
+ingress:
+  enabled: false
+  configs: {}
+    # - ingressName: "internal"
+    #   className: "internal-nginx"
+    #   rules:
+    #     - host: atlas.privyinfra.id
+    #       http:
+    #         paths:
+    #           - path: /rc(?:\/|$)(.*)
+    #             pathType: Prefix
+    #             backend:
+    #               service:
+    #                 name: rc-atlas
+    #                 port:
+    #                   number: 80
+    # - ingressName: "b2b-ingress"
+    #   className: "internal-nginx"
+    #   rules:
+    #     - host: atlas.privyinfra.id
+    #       http:
+    #         - path: /(.*)
+    #           pathType: Prefix
+    #           backend:
+    #             service:
+    #               name: atlas
+    #               port:
+    #                 number: 80
+  # tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+## All Annotations ##
+## Add annotation to selected resources
+annotations:
+  ingress:
+    "nginx.ingress.kubernetes.io/proxy-body-size": "10M"
+    "nginx.ingress.kubernetes.io/use-regex": "true"
+    "nginx.org/client-max-body-size": "10M"
+  deployment: {}
+  hpa: {}
+  preupgradejob:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  service: {}
+  serviceaccount: {}
+  vault:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+
+## in case we need hostAliases ##
+hostAliases: {}
+  # - ip: "8.8.8.8"
+  #   hostnames:
+  #   - "google.com"
+  #   - "www.google.com"
+  # - ip: "1.1.1.1"
+  #   hostnames:
+  #   - "cloudflare.com"
+
+## add pv and pvc
+persistentVolume:
+  enabled: false
+  configs:
+    - storageClassName: standard
+      storageSize: 8Gi
+      accessModes: ReadWriteOnce
+
