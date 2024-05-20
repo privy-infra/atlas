@@ -1,6 +1,6 @@
 apiVersion: v2
 name: privy-atlas
-description: A Helm chart to manage service Kubernetes
+description: A Helm chart to manage deployment Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
 #

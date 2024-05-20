@@ -232,12 +232,3 @@ hostAliases: {}
   # - ip: "1.1.1.1"
   #   hostnames:
   #   - "cloudflare.com"
-
-## add pv and pvc
-persistentVolume:
-  enabled: false
-  configs:
-    - storageClassName: standard
-      storageSize: 8Gi
-      accessModes: ReadWriteOnce
-
