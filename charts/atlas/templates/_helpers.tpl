@@ -159,6 +159,6 @@ Custom image
 {{- if .Values.migrations.customImage.enabled }}
 image: "{{ .Values.migrations.customImage.image.repository }}:{{ .Values.migrations.customImage.image.tag }}"
 {{- else }}
-image: "{{ .Values.migrations.customImage.image.repository }}:{{ .Values.migrations.customImage.image.tag }}"
+image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
