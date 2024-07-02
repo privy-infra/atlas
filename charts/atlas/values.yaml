@@ -207,10 +207,11 @@ ingress:
 ## All Annotations ##
 ## Add annotation to selected resources
 annotations:
-  ingress:
-    "nginx.ingress.kubernetes.io/proxy-body-size": "10M"
-    "nginx.ingress.kubernetes.io/use-regex": "true"
-    "nginx.org/client-max-body-size": "10M"
+  ingress: {}
+    ## Example ingress values
+    # "nginx.ingress.kubernetes.io/proxy-body-size": "10M"
+    # "nginx.ingress.kubernetes.io/use-regex": "true"
+    # "nginx.org/client-max-body-size": "10M"
   deployment: {}
   hpa: {}
   preupgradejob:
