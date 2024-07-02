@@ -46,6 +46,19 @@ gracePeriodSeconds:
 ## Namespace ##
 namespace: {}
 
+## ENV Variable ##
+env:
+  enabled: false
+  # example env:
+  envvalue: {}
+  # - name: IP_HOST
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: status.hostIP
+  # or 
+  # - name: DEMO_ENV
+  #   value: "value-env"
+
 ## Secret ##
 secrets:
   configs:
