@@ -42,6 +42,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- include "atlas.customImage" . | indent 10 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env.enabled}}
+            {{- with .Values.env.envvalue }}
+          env:
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          {{- end }}
           {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
           envFrom:
           {{- include "atlas.secret" . | indent 10 }}
@@ -73,6 +79,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.env.enabled}}
+            {{- with .Values.env.envvalue }}
+          env:
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          {{- end }}
           {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
           envFrom:
           {{- include "atlas.secret" . | indent 10 }}
