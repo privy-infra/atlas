@@ -275,3 +275,12 @@ This project is licensed under the [MIT License](./LICENSE).
 ```
 
 Remember to replace the placeholder URLs, names, and images with your actual details. Customize the sections as needed for your specific Helm Chart.
+
+```
+
+## Changelog 
+```
+1.0.0 Move from atlas, in this tag have bug on custom image
+1.0.1 Stable at this time
+1.0.2 Delete annotation values ingress
+```
