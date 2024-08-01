@@ -26,9 +26,16 @@ securityContext: {}
 
 
 nodeSelector: {}
+strategy: {}
+  # rollingUpdate:
+  #   maxSurge: 25%
+  #   maxUnavailable: 25%
+  # type: RollingUpdate
 
 tolerations: []
-
+  # - key: "example-key"
+  #     operator: "Exists"
+  #     effect: "NoSchedule"
 affinity: {}
 
 ##########################
@@ -112,7 +119,7 @@ liveness:
 
 service:
   type: ClusterIP
-  configs: {}
+  configs: []
     # - name: http
     #   port: 80
     #   targetPort: 8000
