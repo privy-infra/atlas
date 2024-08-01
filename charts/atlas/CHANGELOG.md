@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4 - 2024-08-01
+
+### Added
+
+- Add custom strategy percentage
+
 ## 1.0.3 - 2024-07-02
 
 ### Added
