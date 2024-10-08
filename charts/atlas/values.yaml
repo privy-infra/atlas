@@ -177,13 +177,13 @@ autoscaling:
 
 ## VPA ##
 ## set enabled: false to disable VPA
-verticalautoscaling:
-  enabled: false  # Set true untuk mengaktifkan VPA
-  updateMode: "Auto"  # Pilihan: Auto, Initial, Off
-  minAllowedCpu: "100m"  # Batas minimum penggunaan CPU
-  minAllowedMemory: "128Mi"  # Batas minimum penggunaan memori
-  maxAllowedCpu: "2"  # Batas maksimum penggunaan CPU
-  maxAllowedMemory: "4Gi"  # Batas maksimum penggunaan memori
+# verticalautoscaling:
+#   enabled: false  # Set true untuk mengaktifkan VPA
+#   updateMode: "Auto"  # Pilihan: Auto, Initial, Off
+#   minAllowedCpu: "100m"  # Batas minimum penggunaan CPU
+#   minAllowedMemory: "128Mi"  # Batas minimum penggunaan memori
+#   maxAllowedCpu: "2"  # Batas maksimum penggunaan CPU
+#   maxAllowedMemory: "4Gi"  # Batas maksimum penggunaan memori
 
 ## Replica ##
 replicaCount: 1
@@ -244,7 +244,7 @@ annotations:
     # "nginx.org/client-max-body-size": "10M"
   deployment: {}
   hpa: {}
-  vpa: {}
+  # vpa: {}
   preupgradejob:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"
