@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5 - 2025-02-27
+
+### Added
+
+- Add vault secret operator secret injector
+
 ## 1.0.4 - 2024-08-01
 
 ### Added

@@ -65,15 +65,25 @@ Create the name of the service account to use
 Define secret
 */}}
 {{- define "atlas.secret" }}
-{{- if .Values.secrets.configs.enabled }}
+{{- if and .Values.secrets.configs.enabled (not .Values.secrets.vso.creds.enabled) (not .Values.secrets.vso.configs.enabled) }}
   - secretRef:
       name: "{{ include "atlas.fullname" . }}-configs"
 {{- end }}
-{{- if .Values.secrets.creds.enabled }}
+{{- if and .Values.secrets.creds.enabled (not .Values.secrets.vso.creds.enabled) (not .Values.secrets.vso.configs.enabled) }}
+  - secretRef:
+      name: "{{ include "atlas.fullname" . }}-creds"
+{{- end }}
+{{- if .Values.secrets.vso.configs.enabled }}
+  - secretRef:
+      name: "{{ include "atlas.fullname" . }}-configs"
+{{- end }}
+{{- if .Values.secrets.vso.creds.enabled }}
   - secretRef:
       name: "{{ include "atlas.fullname" . }}-creds"
 {{- end }}
 {{- end }}
+
+
 
 {{/*
 Liveness and Readiness
