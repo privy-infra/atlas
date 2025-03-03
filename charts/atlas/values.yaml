@@ -195,8 +195,8 @@ autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 2
-  averageUtilMem: 60
-  averageUtilCpu: 60
+  averageUtilMem: 80
+  averageUtilCpu: 80
 
 ## VPA ##
 ## set enabled: false to disable VPA
