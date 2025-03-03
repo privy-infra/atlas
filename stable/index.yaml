@@ -2,24 +2,10 @@ apiVersion: v1
 entries:
   privy-atlas:
   - annotations:
-      artifacthub.io/changes: |-
-        - kind: added
-          description: Add vault secret operator secret injector
-    apiVersion: v2
-    appVersion: production
-    created: "2025-02-27T17:53:46.345981+07:00"
-    description: A Helm chart to manage deployment Kubernetes
-    digest: 86b6fa4c656e5eb5847ce89ddf1d9b2497b32ea159aec17c27d0c34b3307b379
-    name: privy-atlas
-    type: application
-    urls:
-    - https://privy-infra.github.io/atlas/stable/privy-atlas-1.0.5.tgz
-    version: 1.0.5
-  - annotations:
       artifacthub.io/changes: "- kind: added\n  description: Add custom strategy "
     apiVersion: v2
     appVersion: production
-    created: "2025-02-27T17:53:46.345187+07:00"
+    created: "2025-03-03T10:26:03.602716+07:00"
     description: A Helm chart to manage deployment Kubernetes
     digest: fd10d96d4650453c2c053f442b678239009a812878d1ae6c156985409cd3831c
     name: privy-atlas
@@ -29,7 +15,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: production
-    created: "2025-02-27T17:53:46.344609+07:00"
+    created: "2025-03-03T10:26:03.602097+07:00"
     description: A Helm chart to manage deployment Kubernetes
     digest: eb50a379b2da051844a34992640c36c9f8af80e3cce6f755ca19a5b273d2266e
     name: privy-atlas
@@ -39,7 +25,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: production
-    created: "2025-02-27T17:53:46.344017+07:00"
+    created: "2025-03-03T10:26:03.601367+07:00"
     description: A Helm chart to manage deployment Kubernetes
     digest: 8a9988a8be7166265f678d4caca50f8dffed198a46e4be9f295b1a815314d7af
     name: privy-atlas
@@ -49,7 +35,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: production
-    created: "2025-02-27T17:53:46.343242+07:00"
+    created: "2025-03-03T10:26:03.600509+07:00"
     description: A Helm chart to manage deployment Kubernetes
     digest: 0717c16620b35797433c7976414d6999f5308c3d506e6380c5a61fe496ceda8e
     name: privy-atlas
@@ -59,7 +45,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: production
-    created: "2025-02-27T17:53:46.341799+07:00"
+    created: "2025-03-03T10:26:03.599705+07:00"
     description: A Helm chart to manage deployment Kubernetes
     digest: 088f49f5a606b655f78cb07a91b72f495868e31d0d5fb35ae782157e443767af
     name: privy-atlas
@@ -67,4 +53,4 @@ entries:
     urls:
     - https://privy-infra.github.io/atlas/stable/privy-atlas-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-27T17:53:46.341033+07:00"
+generated: "2025-03-03T10:26:03.597584+07:00"
