@@ -63,12 +63,24 @@ Describe how users can customize and use your Helm Chart in their own projects. 
 Secret management
 |Name|Description|Value|
 | ------ | ------ | ------ | 
-|secrets.configs.enabled|Enable config|true|
+|secrets.configs.enabled|Enable vault-crd configs|true|
 |secrets.configs.path|Path config|secrets/configs/atlas-example|
 |secrets.configs.autorestart.enabled|Enable config auto restart|true|
-|secrets.creds.enabled|Enable creds|true|
+|secrets.creds.enabled|Enable vault-crd creds|true|
 |secrets.creds.path|Path config|secrets/creds/atlas-example|
-|secrets.creds.autorestart.enabled|Enable config|true|
+|secrets.creds.autorestart.enabled|Enable creds auto restart|true|
+|secrets.vso.type|Set vault secret operator version|"kv-v1" or "kv-v2"|
+|secrets.vso.vaultauth|Set vaultauth name|""|
+|secrets.vso.configs.enabled|Enable vso configs, will disable vault-crd configs|true|
+|secrets.vso.configs.engine|Vault engine name|""|
+|secrets.vso.configs.path|Path secret|configs/atlas-example|
+|secrets.vso.configs.autorestart.enabled|Enable config auto restart|true|
+|secrets.vso.creds.enabled|Enable vso creds, will disable vault-crd creds|true|
+|secrets.vso.creds.engine|Vault engine name|""|
+|secrets.vso.creds.path|Path secret|configs/atlas-example|
+|secrets.vso.creds.autorestart.enabled|Enable config auto restart|true|
+
+
 
 #### volume Configuration Parameters
 For set up service account or volume, sometimes pair with `volumeMounts`

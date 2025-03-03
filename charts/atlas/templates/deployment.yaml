@@ -52,7 +52,7 @@ spec:
               {{- toYaml . | nindent 10 }}
             {{- end }}
           {{- end }}
-          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
+          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled .Values.secrets.vso.creds.enabled .Values.secrets.vso.configs.enabled }}
           envFrom:
           {{- include "atlas.secret" . | indent 10 }}
             {{- range .Values.secrets.additional.name }}
@@ -89,7 +89,7 @@ spec:
               {{- toYaml . | nindent 10 }}
             {{- end }}
           {{- end }}
-          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled }}
+          {{- if or .Values.secrets.configs.enabled .Values.secrets.creds.enabled .Values.secrets.additional.enabled .Values.secrets.vso.creds.enabled .Values.secrets.vso.configs.enabled }}
           envFrom:
           {{- include "atlas.secret" . | indent 10 }}
             {{- range .Values.secrets.additional.name }}
