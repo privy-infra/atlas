@@ -183,7 +183,22 @@ For set up service account or volume, sometimes pair with `volumeMounts`
 | ------ | ------ | ------ | 
 |hostAliases|add hostaliases for dns local||
 
+#### HTTPRoute Configuration Parameters
 
+| Name | Description | Value |
+|------|-------------|------|
+| `httproute.enabled` | Enable or disable HTTPRoute resource creation | `false` |
+| `httproute.configs` | List of HTTPRoute configurations | `[]` |
+| `httproute.configs[].httproutename` | Name of the HTTPRoute resource | `""` |
+| `httproute.configs[].parentRefs` | Gateway references where the route attaches | `[]` |
+| `httproute.configs[].parentRefs[].name` | Name of the Gateway | `""` |
+| `httproute.configs[].parentRefs[].namespace` | Namespace of the Gateway | `""` |
+| `httproute.configs[].hostnames` | Hostnames that the route should match | `[]` |
+| `httproute.configs[].rules` | Routing rules for the HTTPRoute | `[]` |
+| `httproute.configs[].rules[].matches` | Match conditions for incoming requests | `[]` |
+| `httproute.configs[].rules[].backendRefs` | Backend services where traffic will be routed | `[]` |
+| `httproute.configs[].rules[].backendRefs[].name` | Backend service name | `""` |
+| `httproute.configs[].rules[].backendRefs[].port` | Backend service port | `80` |
 
 ### Example Deployments
 

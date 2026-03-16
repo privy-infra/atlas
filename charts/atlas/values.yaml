@@ -257,9 +257,32 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+## HttpRoute ##
+## enable disable httproute
+## set true to httproute.enabled to enable httproute
+## you can modify httproute.rules freely
+httproute:
+  enabled: false
+  configs: []
+  # - httproutename : "httproute-internal"
+  #   parentRefs:
+  #   - name: internal-gateway
+  #     namespace: atlas-ns
+  #   hostnames:
+  #   - atlas.privyinfra.id
+  #   rules:
+  #   - matches:
+  #     - path:
+  #         type: PathPrefix
+  #         value: /
+  #     backendRefs:
+  #     - name: atlas
+  #       port: 80
+
 ## All Annotations ##
 ## Add annotation to selected resources
 annotations:
+  httproute: {}
   ingress: {}
     ## Example ingress values
     # "nginx.ingress.kubernetes.io/proxy-body-size": "10M"

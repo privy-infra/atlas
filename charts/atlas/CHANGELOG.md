@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6 - 2026-03-16
+
+### Added
+
+- Add httproute feature 
+
 ## 1.0.5 - 2025-02-27
 
 ### Added
