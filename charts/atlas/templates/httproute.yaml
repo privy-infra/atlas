@@ -1,0 +1,27 @@
+{{- $selLabs := include "atlas.selectorLabels" . | nindent 4 -}}
+{{- $namespaces := .Values.namespace -}}
+{{- if .Values.httproute.enabled }}
+{{- range .Values.httproute.configs }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ printf "%s" .httproutename | trunc 63 | trimSuffix "-" }}
+  annotations:
+{{ toYaml $.Values.annotations.httproute | indent 4 }}
+  labels:
+    {{- $selLabs }}
+  namespace: {{ $namespaces }}
+spec:
+  parentRefs:
+ {{- range .parentRefs }}
+  - name: {{ .name }}
+    namespace: {{ .namespace }}
+{{- end }}
+  hostnames:
+  {{- range .hostnames }}
+  - {{ . }}
+  {{- end }}
+  rules: {{ toYaml .rules | nindent 4 }}
+{{- end }}
+{{- end }}
