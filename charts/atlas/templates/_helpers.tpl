@@ -172,3 +172,20 @@ image: "{{ .Values.migrations.customImage.image.repository }}:{{ .Values.migrati
 image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
+
+{{/*
+Container command
+- key "command" tidak ada  -> default ["/bin/sh", "-c"] (perilaku lama)
+- command: []              -> field command tidak dirender (pakai ENTRYPOINT image)
+- command: ["migrate"]     -> pakai command custom
+Usage: {{ include "atlas.command" .Values.migrations }}
+*/}}
+{{- define "atlas.command" -}}
+{{- $cmd := list "/bin/sh" "-c" -}}
+{{- if hasKey . "command" -}}
+{{- $cmd = .command | default list -}}
+{{- end -}}
+{{- if $cmd -}}
+command: [{{ range $i, $c := $cmd }}{{ if $i }}, {{ end }}{{ $c | quote }}{{ end }}]
+{{- end -}}
+{{- end }}

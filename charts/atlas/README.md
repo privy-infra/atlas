@@ -131,17 +131,58 @@ For set up service account or volume, sometimes pair with `volumeMounts`
 |Name|Description|Value|
 | ------ | ------ | ------ | 
 |interceptor.enabled |enable interceptor |false|
-|interceptor.args |command that execute when container run |"echo 'test-interceptor'" |
+|interceptor.command |container command for interceptor. Set `[]` to omit `command` and use the image ENTRYPOINT (for images without a shell) |["/bin/sh", "-c"]|
+|interceptor.args |args passed to `command`. Accepts a string (rendered as a single arg) or a list. Set `[]` / `null` to omit `args` |"echo 'test-interceptor'" |
 
 #### migrations Configuration Parameters
 |Name|Description|Value|
 | ------ | ------ | ------ | 
 |migrations.enabled |enable migrations |false|
 |migrations.type |type of migration use init-container or pre-upgrade-job |init-container |
-|migrations.args |command that execute when migration run |"cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml; echo 'Initializing Service...'"|
+|migrations.command |container command for init-container / pre-upgrade-job. Set `[]` to omit `command` and use the image ENTRYPOINT |["/bin/sh", "-c"]|
+|migrations.args |args passed to `command` (list). Set `[]` to omit `args` when `command` is enough |"cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml; echo 'Initializing Service...'"|
 | migrations.customImage.enabled | enable custom image | false | 
 | migrations.customImage.image.repository | repository name for custom image| [] | 
 | migrations.customImage.image.tag |  repository tag | [] | 
+
+##### Custom command examples
+`command` behavior (applies to both `interceptor` and `migrations`):
+
+- key `command` not set → default `["/bin/sh", "-c"]` (previous behavior)
+- `command: []` → `command` is not rendered, the image ENTRYPOINT is used
+- `command: ["migrate"]` → custom command is used
+
+```yaml
+# Default: run through shell
+migrations:
+  enabled: true
+  args:
+    - "cd /go/src/atlas && ./main db:migrate"
+
+# Image without shell (e.g. distroless / migrate/migrate)
+migrations:
+  enabled: true
+  command: ["migrate"]
+  args: ["-path", "/migrations", "-database", "$(DATABASE_URL)", "up"]
+
+# Use image ENTRYPOINT, pass args directly
+migrations:
+  enabled: true
+  command: []
+  args: ["up"]
+
+# Command only, no args
+migrations:
+  enabled: true
+  command: ["migrate", "up"]
+  args: []
+
+# Interceptor with args as a list
+interceptor:
+  enabled: true
+  command: []
+  args: ["http", "--port", "8080"]
+```
 
 
 #### autoscaling Configuration Parameters
@@ -152,6 +193,30 @@ For set up service account or volume, sometimes pair with `volumeMounts`
 |autoscaling.maxReplicas |replica maximal when high trrafic  |2|
 |autoscaling.averageUtilMem |amount of memory to trigger scaling |80|
 |autoscaling.averageUtilCpu |amount of cpu to trigger scaling |80|
+|autoscaling.behavior.scaleDown.stabilizationWindowSeconds |stabilization window before scaling down |120|
+|autoscaling.behavior.scaleDown.percentPeriodSeconds |`periodSeconds` for scale-down `Percent` policy (10%) |60|
+|autoscaling.behavior.scaleUp.stabilizationWindowSeconds |stabilization window before scaling up |120|
+|autoscaling.behavior.scaleUp.percentValue |`value` (percent) for scale-up `Percent` policy |900|
+|autoscaling.behavior.scaleUp.percentPeriodSeconds |`periodSeconds` for scale-up `Percent` policy |30|
+
+All `autoscaling.behavior.*` keys are optional; any key not set falls back to the default above. The scale-down `Pods` policy (2 pods / 60s) and `selectPolicy` (scaleDown: `Min`, scaleUp: `Max`) are fixed.
+
+```yaml
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  averageUtilMem: 80
+  averageUtilCpu: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      percentPeriodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      percentValue: 100
+      percentPeriodSeconds: 15
+```
 
 
 #### resources Configuration Parameters
