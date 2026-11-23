@@ -60,11 +60,15 @@ spec:
                 name: {{ . | quote }}
             {{- end }}
           {{- end }}
-          command: ["/bin/sh", "-c"]
+          {{- with (include "atlas.command" .Values.migrations) }}
+          {{ . }}
+          {{- end }}
+          {{- if .Values.migrations.args }}
           args: 
             {{- range .Values.migrations.args }}
             - {{ . | quote }}
             {{- end}}
+          {{- end }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -98,8 +102,19 @@ spec:
             {{- end }}
           {{- end }}
           {{- if .Values.interceptor.enabled }}
-          command: ["/bin/sh", "-c"]
-          args: [{{ .Values.interceptor.args | quote }}]
+          {{- with (include "atlas.command" .Values.interceptor) }}
+          {{ . }}
+          {{- end }}
+          {{- with .Values.interceptor.args }}
+          {{- if kindIs "string" . }}
+          args: [{{ . | quote }}]
+          {{- else }}
+          args:
+            {{- range . }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
           {{- end }}
           ports:
             {{- range .Values.service.configs }}

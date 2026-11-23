@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7 - 2026-11-23
+
+### Added
+
+- Add custom autoscaling behavior and custom command args interceptor
+
 ## 1.0.6 - 2026-03-16
 
 ### Added

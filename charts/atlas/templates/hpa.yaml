@@ -18,21 +18,21 @@ spec:
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 120
+      stabilizationWindowSeconds: {{ dig "behavior" "scaleDown" "stabilizationWindowSeconds" 120 .Values.autoscaling }}
       policies:
       - type: Percent
         value: 10
-        periodSeconds: 60
+        periodSeconds: {{ dig "behavior" "scaleDown" "percentPeriodSeconds" 60 .Values.autoscaling }}
       - type: Pods
         value: 2
         periodSeconds: 60
       selectPolicy: Min
     scaleUp:
-      stabilizationWindowSeconds: 120
+      stabilizationWindowSeconds: {{ dig "behavior" "scaleUp" "stabilizationWindowSeconds" 120 .Values.autoscaling }}
       policies:
       - type: Percent
-        value: 900
-        periodSeconds: 30
+        value: {{ dig "behavior" "scaleUp" "percentValue" 900 .Values.autoscaling }}
+        periodSeconds: {{ dig "behavior" "scaleUp" "percentPeriodSeconds" 30 .Values.autoscaling }}
       selectPolicy: Max
   metrics:
     {{- if .Values.autoscaling.averageUtilMem }}

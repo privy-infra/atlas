@@ -170,12 +170,22 @@ image:
 interceptor:
   enabled: false
   args: "echo 'test-interceptor'" # "cd /opt/atlas ; envsubst < config/app.yaml.dist > config/app.yaml && ./atlas http"
+  ## args interceptor: string (dijalankan via command) atau list, set [] / null untuk menghilangkan args
+  ## command container interceptor (default: ["/bin/sh", "-c"])
+  ## set [] jika image tidak punya shell -> pakai ENTRYPOINT image, args dieksekusi langsung
+  command: ["/bin/sh", "-c"]
 
 ## Migration ##
 migrations:
   enabled: false
   # type: pre-upgrade-job
   type: init-container
+  ## command untuk init-container / pre-upgrade-job (default: ["/bin/sh", "-c"])
+  ## Untuk image tanpa shell (sh), contoh:
+  ##   command: ["migrate"]          -> args dieksekusi sebagai argumen "migrate"
+  ##   command: []                   -> pakai ENTRYPOINT image, args diteruskan langsung
+  ## args bisa dikosongkan (args: []) jika command sudah cukup, mis. command: ["migrate", "up"]
+  command: ["/bin/sh", "-c"]
     # Init Container 
     # - "cd /go/src/atlas && ./main db:migrate"
     # Pre-Uprade-Job 
@@ -197,6 +207,15 @@ autoscaling:
   maxReplicas: 2
   averageUtilMem: 80
   averageUtilCpu: 80
+  ## HPA behavior (opsional) - jika tidak di-set, nilai default di bawah yang dipakai
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      percentPeriodSeconds: 60   # periodSeconds untuk policy type Percent
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      percentValue: 900          # value (persen) untuk policy type Percent
+      percentPeriodSeconds: 30   # periodSeconds untuk policy type Percent
 
 ## VPA ##
 ## set enabled: false to disable VPA
